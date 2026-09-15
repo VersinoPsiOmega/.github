@@ -155,6 +155,7 @@ for them.
 |---|---|
 | [**Semvec-neo4j-agent-integration**](https://github.com/VersinoPsiOmega/Semvec-neo4j-agent-integration) | Persistent semantic memory for multi-agent LLM systems. Semvec drift detection combined with Neo4j knowledge graphs, as a reference implementation for regulated multi-agent workloads. |
 | [**claude-powerpoint-token-reduction**](https://github.com/VersinoPsiOmega/claude-powerpoint-token-reduction) | Cutting the input-token bill of the Claude for PowerPoint add-in with semvec semantic memory behind a LiteLLM gateway. |
+| [**semvec-sizing-load-proof**](https://github.com/VersinoPsiOmega/semvec-sizing-load-proof) | What constant-cost memory is worth in hardware, measured rather than argued: a token-to-hardware sizing model, LOCOMO and LongBench-v2 against a live reader, and a k6 load demonstration. **31 → 8 H100 GPUs** on a 2 000-seat reference workload. Every figure has a committed artefact, and CI fails if the prose stops matching it. |
 
 The semvec core is proprietary and ships as one wheel for Linux (glibc and musl),
 macOS, and Windows on [PyPI](https://pypi.org/project/semvec/). Self-hosted,
