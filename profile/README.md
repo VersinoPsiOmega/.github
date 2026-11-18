@@ -53,7 +53,7 @@ in-process, sub-millisecond `state.update()`.
                                       │      bit-exact, Decimal        │
                                       └────────────────┬───────────────┘
                                                        ▼
-                                          150–350-token context block
+                                          compact, fixed-budget context block
                                                        ▼
                                              any LLM system prompt
 ```
@@ -130,22 +130,31 @@ Deep dives: [vs mem0](https://semvec-docs.pages.dev/comparisons/vs-mem0/) ·
 
 ## Benchmarks, with their conditions
 
-**LOCOMO 10-conv, 1986 QAs, gpt-4o, T = 0.0.** Semvec BM25-hybrid with cross-encoder
-rerank scores **F1 0.495** including adversarial Cat 5, against 0.469 for the
-dense-only baseline. Rank **2 of 8** on the published LOCOMO leaderboard.
+**Mem0-near quality at zero generative-LLM cost at ingest.**
 
-**Against mem0.** Under the mem0 LLM-as-Judge prompt, used verbatim, semvec clears mem0
-by **~12 pp** at the aggregate level. The mem0 paper excludes Cat 5; the LOCOMO paper
-does not. Wall-clock is **17× shorter**, 2.77 h against ~47 h on the same suite,
-because semvec issues zero LLM calls during ingest.
+**LOCOMO, mem0 1:1 setup.** Reader and judge `gpt-4o-mini`, T = 0, judge prompt
+byte-identical to mem0's, adversarial Cat 5 excluded (the mem0 / Zep / RAG headline
+convention), 1 540 QAs. Semvec scores **J 0.605**, within ~6 pp of mem0 (0.669 in the
+mem0 paper, 0.675 in our own head-to-head re-run against `mem0ai==2.0.2`). That is
+rank 5 of 10 under the same reader and judge, ahead of LangMem, Zep, A-Mem,
+MemoryBank and Letta. Stemmed F1 over all five categories including adversarial:
+**0.424** (1 986 QAs).
 
-**Token efficiency.** **~93 % fewer input tokens per turn** than gpt-4-turbo
-full-context 128K on the same config, ~1.5–2 k against ~26 k.
+**Cost class.** Of the ten LOCOMO contenders, Semvec is the only dedicated memory
+system that ingests without a generative LLM call. Replaying 675 turns of LOCOMO
+conv-44: **~3 min** for Semvec against ~24.5 min for mem0, **~8× faster ingest** and
+~5.5× faster end to end.
 
-The harness ships in the wheel. `pip install "semvec[benchmarks,hybrid,api,mem0]"` plus
-`benchmarks/run_locomo.py`, verbatim judge prompt, pinned dataset version. We have not
-benchmarked head-to-head against Letta or LangChain Memory, so we publish no numbers
-for them.
+**Token efficiency.** **~2 000 context tokens per reader call** (REST `/v1/run`,
+top-K 30 reranked) against ~16 300–20 700 for full-context replay: **~8× fewer input
+tokens, an ~87 % reduction**.
+
+The harness ships in the wheel: `pip install "semvec[benchmarks,hybrid,api]"` plus
+`benchmarks/run_locomo.py --judge --judge-model openai/gpt-4o-mini`. Per-category
+tables and the exact server configuration:
+[semvec-docs.pages.dev/benchmarks](https://semvec-docs.pages.dev/benchmarks/).
+The head-to-head re-run was against mem0 only; the other positions use the published
+LOCOMO results under the same reader and judge.
 
 <br>
 
